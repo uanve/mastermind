@@ -80,13 +80,7 @@ class Mastermind:
         while True:
             it += 1
 
-            if (it == 1 and self.N == 4):
-                next_option = (1, 1, 2, 3)
-
-            else:
-                next_option = self.infere_all_scores()
-
-            # assert self.solution in [e for key_values in self.new_options.values() for e in key_values]
+            next_option = self.infere_all_scores()
 
             print(f"trying {next_option}")
 
@@ -118,8 +112,21 @@ class Mastermind:
     def calculate_white_score(self, arr1, arr2, black_match_idx):
         arr1 = self.filter_idx(arr1, black_match_idx)
         arr2 = self.filter_idx(arr2, black_match_idx)
-        # return sum([arr1[i] in arr2 for i in range(len(arr1))])
-        return len(set([arr1[i] for i in range(len(arr1)) if arr1[i] in arr2]))
+
+        white_pegs = 0
+        solution_counts = {}  # Store the count of colors in the solution
+
+        # Count the occurrences of each color in the solution
+        for color in arr1:
+            solution_counts[color] = solution_counts.get(color, 0) + 1
+
+        # Iterate through the guess and count the white pegs
+        for i in range(len(arr2)):
+            if arr2[i] in solution_counts and solution_counts[arr2[i]] > 0:
+                white_pegs += 1
+                solution_counts[arr2[i]] -= 1
+
+        return white_pegs
 
     @staticmethod
     def filter_idx(arr, filtered_idx):
@@ -128,9 +135,9 @@ class Mastermind:
 
 def solve_many_games():
     n_colors = 6
-    for i in range(20):
+    for i in range(10):
 
-        solution = tuple(random.randint(1, n_colors) for i in range(3))
+        solution = tuple(random.randint(1, n_colors) for i in range(4))
 
         interactive = False
 
@@ -154,7 +161,7 @@ def solve_one_game(n_colors, solution=None, interactive=False):
 if __name__ == "__main__":
     n_colors = 6
     interactive = False
-    solution = (3, 2, 1)
+    solution = (5, 2, 3)
 
     solve_one_game(n_colors, solution=solution, interactive=interactive)
     # solve_many_games()
